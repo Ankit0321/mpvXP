@@ -9,11 +9,11 @@ on:
   workflow_dispatch: # Manual trigger
 
 jobs:
-build:
-    runs-on: ubuntu-latest
-    outputs:
-      commit_count: ${{ steps.set_commit.outputs.commit_count }}
-      build_time: ${{ steps.set_commit.outputs.build_time }}
+  build:
+  runs-on: ubuntu-latest
+  outputs:
+  commit_count: ${{ steps.set_commit.outputs.commit_count }}
+  build_time: ${{ steps.set_commit.outputs.build_time }}
 
     steps:
       - name: Checkout repo
