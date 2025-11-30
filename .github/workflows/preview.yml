@@ -34,6 +34,13 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew assemblePreview
 
+      - name: Upload APK
+  uses: actions/upload-artifact@v3
+  with:
+    name: mpvEx-debug
+    
+    path: app/build/outputs/apk/debug/*.apk
+
       - name: Copy build artifacts
         id: set_commit
         run: |
@@ -98,19 +105,11 @@ jobs:
           </body>
           </html>" > ./public/index.html
 
-      
       - name: Upload Debug APK
-  uses: actions/upload-artifact@v4
-  with:
-    name: mpvXP-debug-apk
-    path: app/build/outputs/apk/debug/*.apk
-    
-  deploy:
-    needs: publish
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-    steps:
+        uses: actions/upload-artifact@v4
+        with:
+          name: mpvXP-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
