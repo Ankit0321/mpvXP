@@ -131,32 +131,32 @@ fun GestureHandler(
                 return@detectTapGestures
               }
               
-              // --- START CUSTOM 3-ZONE LOGIC ---
+              // --- CUSTOM 3-ZONE LOGIC (35% SIDE / 3s SEEK) ---
               
               val xFrac = it.x / size.width
               val yFrac = it.y / size.height
 
-              // 1. BLUE ZONE: Top 15% or Bottom 15% -> Toggle UI Controls
+              // 1. BLUE ZONE: Top 15% or Bottom 15% -> Toggle UI
               if (yFrac < 0.15f || yFrac > 0.85f) {
                   if (controlsShown) viewModel.hideControls() else viewModel.showControls()
               }
-              // 2. RED ZONE LEFT: Left 20% -> Rewind 10s
-              else if (xFrac < 0.20f) {
+              // 2. RED ZONE LEFT: Left 35% -> Rewind 3s
+              else if (xFrac < 0.35f) {
                   val pos = position ?: 0
-                  viewModel.seekTo(pos - 10)
-                  haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove) 
+                  // Ensure we don't seek below 0
+                  val target = if (pos - 3 < 0) 0 else pos - 3
+                  viewModel.seekTo(target)
               }
-              // 3. RED ZONE RIGHT: Right 20% -> Forward 10s
-              else if (xFrac > 0.80f) {
+              // 3. RED ZONE RIGHT: Right 35% -> Forward 3s (Starts at 65%)
+              else if (xFrac > 0.65f) {
                   val pos = position ?: 0
-                  viewModel.seekTo(pos + 10)
-                  haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                  viewModel.seekTo(pos + 3)
               }
-              // 4. GREEN ZONE: Center Box -> Play/Pause
+              // 4. GREEN ZONE: Center (Remaining 30%) -> Play/Pause
               else {
                   if (paused == true) viewModel.unpause() else viewModel.pause()
-                  haptics.performHapticFeedback(HapticFeedbackType.LongPress)
               }
+              // --- END CUSTOM LOGIC ---
             },
             onPress = {
               isLongPress = false
