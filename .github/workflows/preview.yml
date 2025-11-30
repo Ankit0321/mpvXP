@@ -15,35 +15,35 @@ jobs:
   commit_count: ${{ steps.set_commit.outputs.commit_count }}
   build_time: ${{ steps.set_commit.outputs.build_time }}
 
-  steps:
-  - name: Checkout repo
-  uses: actions/checkout@v4
-  with:
-        fetch-depth: 
+steps:
+       - name: Checkout repo
+         uses: actions/checkout@v4
+         with:
+         fetch-depth: 
         
-        - name: Setup JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'adopt'
-          java-version: 17
-          cache: 'gradle'
+       - name: Setup JDK 17
+         uses: actions/setup-java@v4
+         with:
+         distribution: 'adopt'
+         java-version: 17
+         cache: 'gradle'
           
-        - name: Make gradlew executable
-        run: chmod +x ./gradlew
+       - name: Make gradlew executable
+         run: chmod +x ./gradlew
 
-      - name: Build with Gradle
-        run: ./gradlew assemblePreview
+       - name: Build with Gradle
+         run: ./gradlew assemblePreview
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v3
-      with:
-      name: mpvEx-debug
+       - name: Upload APK
+         uses: actions/upload-artifact@v3
+         with:
+          name: mpvEx-debug
     
-    path: app/build/outputs/apk/debug/*.apk
+          path: app/build/outputs/apk/debug/*.apk
     
-    - name: Copy build artifacts
-        id: set_commit
-        run: |
+       - name: Copy build artifacts
+         id: set_commit
+         run: |
           set -e
           commit_count=$(git rev-list --count HEAD)
           build_time=$(date -u +"%Y-%m-%d %H:%M UTC")
@@ -56,29 +56,29 @@ jobs:
             cp app/build/outputs/apk/preview/app-${arch}-preview-signed.apk output/mpvEx-preview-r${commit_count}-${arch}.apk
           done
 
-      - name: Upload all artifacts
-        uses: actions/upload-artifact@v4
-        with:
+       - name: Upload all artifacts
+         uses: actions/upload-artifact@v4
+         with:
           name: preview-apks
           path: output/
 
-  publish:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: preview-apks
-          path: ./public
+         publish:
+         needs: build
+         runs-on: ubuntu-latest
+         steps:
+         - name: Download artifacts
+           uses: actions/download-artifact@v4
+           with:
+            name: preview-apks
+            path: ./public
 
-      - name: Generate download page
-        run: |
-          commit_count=${{ needs.build.outputs.commit_count }}
-          build_time="${{ needs.build.outputs.build_time }}"
-          echo "<!DOCTYPE html>
-          <html lang='en'>
-          <head>
+         - name: Generate download page
+           run: |
+            commit_count=${{ needs.build.outputs.commit_count }}
+            build_time="${{ needs.build.outputs.build_time }}"
+            echo "<!DOCTYPE html>
+            <html lang='en'>
+            <head>
             <meta charset='UTF-8'>
             <meta name='viewport' content='width=device-width, initial-scale=1.0'>
             <title>mpvEx Preview Builds</title>
@@ -89,8 +89,8 @@ jobs:
               a:hover { text-decoration: underline; }
               .note { color: #8b949e; font-size: 0.9em; margin-top: 1em; }
             </style>
-          </head>
-          <body>
+            </head>
+            <body>
             <h1>mpvEx Preview Build r${commit_count}</h1>
             <p>Build time: ${build_time}</p>
             <p>Download the latest signed APKs:</p>
@@ -102,14 +102,14 @@ jobs:
               <li><a href='mpvEx-preview-r${commit_count}-x86_64.apk'>x86_64</a></li>
             </ul>
             <p class='note'>Built automatically from the <code>dev</code> branch.</p>
-          </body>
-          </html>" > ./public/index.html
+            </body>
+            </html>" > ./public/index.html
 
-      - name: Upload Debug APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: mpvXP-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+       - name: Upload Debug APK
+         uses: actions/upload-artifact@v4
+         with:
+           name: mpvXP-debug-apk
+           path: app/build/outputs/apk/debug/*.apk
+       - name: Deploy to GitHub Pages
+         id: deployment
+         uses: actions/deploy-pages@v4
