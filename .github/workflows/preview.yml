@@ -9,7 +9,7 @@ on:
   workflow_dispatch: # Manual trigger
 
 jobs:
-  build:
+build:
     runs-on: ubuntu-latest
     outputs:
       commit_count: ${{ steps.set_commit.outputs.commit_count }}
