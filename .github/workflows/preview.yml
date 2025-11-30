@@ -34,8 +34,8 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew assemblePreview
 
-      - name: Upload Debug APK
+      - name: Upload EVERYTHING
         uses: actions/upload-artifact@v4
         with:
-          name: mpvXP-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+         name: all-outputs
+         path: app/build/outputs/
