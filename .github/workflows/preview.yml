@@ -34,14 +34,14 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew assemblePreview
 
-      - name: Upload APK
-  uses: actions/upload-artifact@v3
-  with:
-    name: mpvEx-debug
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+      name: mpvEx-debug
     
     path: app/build/outputs/apk/debug/*.apk
-
-      - name: Copy build artifacts
+    
+    - name: Copy build artifacts
         id: set_commit
         run: |
           set -e
