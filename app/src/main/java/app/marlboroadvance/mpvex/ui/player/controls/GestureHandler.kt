@@ -140,19 +140,20 @@ fun GestureHandler(
               if (yFrac < 0.15f || yFrac > 0.85f) {
                   if (controlsShown) viewModel.hideControls() else viewModel.showControls()
               }
-              // 2. RED ZONE LEFT: Left 35% -> Rewind 3s (Relative)
+              // 2. RED ZONE LEFT: Left 35% -> Rewind 3s
               else if (xFrac < 0.35f) {
-                  // "relative+exact" forces it to move exactly 3s, even if keyframes are far apart
-                  MPVLib.command(arrayOf("seek", "-3", "relative+exact"))
+                  // REMOVED 'arrayOf', passed strings directly
+                  MPVLib.command("seek", "-3", "relative+exact")
               }
-              // 3. RED ZONE RIGHT: Right 35% -> Forward 3s (Relative)
+              // 3. RED ZONE RIGHT: Right 35% -> Forward 3s
               else if (xFrac > 0.65f) {
-                  MPVLib.command(arrayOf("seek", "3", "relative+exact"))
+                  // REMOVED 'arrayOf'
+                  MPVLib.command("seek", "3", "relative+exact")
               }
               // 4. GREEN ZONE: Center -> Play/Pause
               else {
-                  // Cycle pause directly to avoid UI lag
-                  MPVLib.command(arrayOf("cycle", "pause"))
+                  // REMOVED 'arrayOf'
+                  MPVLib.command("cycle", "pause")
               }
             },
             onPress = {
