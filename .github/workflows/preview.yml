@@ -32,7 +32,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew assemblePreview
+        run: ./gradlew assembleDebug
 
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
