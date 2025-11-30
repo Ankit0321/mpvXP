@@ -169,7 +169,7 @@ object GesturePreferencesScreen : Screen {
             onValueChange = { preferences.doubleTapSeekAreaWidth.set(it) },
             values = seekAreaValues,
             valueToText = { AnnotatedString("${it}%") },
-            title = { Text(text = "Double Tap Seek Area Width") },
+            title = { Text(text = "Single Tap Seek Area Width") },
             summary = {
               Text(
                 text = "Current: ${doubleTapSeekAreaWidth}%",
