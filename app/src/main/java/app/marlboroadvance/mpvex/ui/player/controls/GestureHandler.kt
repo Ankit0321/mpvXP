@@ -130,37 +130,34 @@ fun GestureHandler(
               if (isLongPress) {
                 return@detectTapGestures
               }
+              
+              // --- START CUSTOM 3-ZONE LOGIC ---
+              
+              val xFrac = it.x / size.width
+              val yFrac = it.y / size.height
 
-              // --- CUSTOM 3-ZONE LOGIC ---
-              val xFraction = it.x / size.width
-              val yFraction = it.y / size.height
-
-              // 1. BLUE ZONE: Top 15% or Bottom 15% -> Toggle UI
-              if (yFraction < 0.15f || yFraction > 0.85f) {
+              // 1. BLUE ZONE: Top 15% or Bottom 15% -> Toggle UI Controls
+              if (yFrac < 0.15f || yFrac > 0.85f) {
                   if (controlsShown) viewModel.hideControls() else viewModel.showControls()
               }
-              // 2. RED ZONE (Left): Left 20% -> Rewind 10s
-              else if (xFraction < 0.20f) {
-                  val currentPos = position ?: 0
-                  viewModel.seekTo(currentPos - 3) 
-                  haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.TextHandleMove)
+              // 2. RED ZONE LEFT: Left 20% -> Rewind 10s
+              else if (xFrac < 0.20f) {
+                  val pos = position ?: 0
+                  viewModel.seekTo(pos - 10)
+                  haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove) 
               }
-              // 3. RED ZONE (Right): Right 20% -> Forward 10s
-              else if (xFraction > 0.80f) {
-                  val currentPos = position ?: 0
-                  viewModel.seekTo(currentPos + 3)
-                  haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.TextHandleMove)
+              // 3. RED ZONE RIGHT: Right 20% -> Forward 10s
+              else if (xFrac > 0.80f) {
+                  val pos = position ?: 0
+                  viewModel.seekTo(pos + 10)
+                  haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
               }
-              // 4. GREEN ZONE (Center): Play/Pause
+              // 4. GREEN ZONE: Center Box -> Play/Pause
               else {
-                  if (paused == true) {
-                      viewModel.unpause()
-                  } else {
-                      viewModel.pause()
-                  }
-                  haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+                  if (paused == true) viewModel.unpause() else viewModel.pause()
+                  haptics.performHapticFeedback(HapticFeedbackType.LongPress)
               }
-            },   
+            },
             onPress = {
               isLongPress = false
 
