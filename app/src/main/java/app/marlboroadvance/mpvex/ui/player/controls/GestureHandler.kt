@@ -130,8 +130,8 @@ fun GestureHandler(
               if (isLongPress) {
                 return@detectTapGestures
               }
-              
-              // --- CUSTOM 3-ZONE LOGIC (35% SIDE / 3s SEEK) ---
+
+              // --- FINAL CORRECTED LOGIC ---
               
               val xFrac = it.x / size.width
               val yFrac = it.y / size.height
@@ -140,23 +140,20 @@ fun GestureHandler(
               if (yFrac < 0.15f || yFrac > 0.85f) {
                   if (controlsShown) viewModel.hideControls() else viewModel.showControls()
               }
-              // 2. RED ZONE LEFT: Left 35% -> Rewind 3s
+              // 2. RED ZONE LEFT: Left 35% -> Rewind 3s (Relative)
               else if (xFrac < 0.35f) {
-                  val pos = position ?: 0
-                  // Ensure we don't seek below 0
-                  val target = if (pos - 3 < 0) 0 else pos - 3
-                  viewModel.seekTo(target)
+                  // "relative+exact" forces it to move exactly 3s, even if keyframes are far apart
+                  MPVLib.command(arrayOf("seek", "-3", "relative+exact"))
               }
-              // 3. RED ZONE RIGHT: Right 35% -> Forward 3s (Starts at 65%)
+              // 3. RED ZONE RIGHT: Right 35% -> Forward 3s (Relative)
               else if (xFrac > 0.65f) {
-                  val pos = position ?: 0
-                  viewModel.seekTo(pos + 3)
+                  MPVLib.command(arrayOf("seek", "3", "relative+exact"))
               }
-              // 4. GREEN ZONE: Center (Remaining 30%) -> Play/Pause
+              // 4. GREEN ZONE: Center -> Play/Pause
               else {
-                  if (paused == true) viewModel.unpause() else viewModel.pause()
+                  // Cycle pause directly to avoid UI lag
+                  MPVLib.command(arrayOf("cycle", "pause"))
               }
-              // --- END CUSTOM LOGIC ---
             },
             onPress = {
               isLongPress = false
