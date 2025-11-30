@@ -142,13 +142,13 @@ fun GestureHandler(
               // 2. RED ZONE (Left): Left 20% -> Rewind 10s
               else if (xFraction < 0.20f) {
                   val currentPos = position ?: 0
-                  viewModel.seekTo(currentPos - 10) 
+                  viewModel.seekTo(currentPos - 3) 
                   haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.TextHandleMove)
               }
               // 3. RED ZONE (Right): Right 20% -> Forward 10s
               else if (xFraction > 0.80f) {
                   val currentPos = position ?: 0
-                  viewModel.seekTo(currentPos + 10)
+                  viewModel.seekTo(currentPos + 3)
                   haptics.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.TextHandleMove)
               }
               // 4. GREEN ZONE (Center): Play/Pause
