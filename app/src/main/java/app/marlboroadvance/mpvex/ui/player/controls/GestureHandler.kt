@@ -121,20 +121,51 @@ fun GestureHandler(
       .pointerInput(doubleTapSeekAreaWidth, useSingleTapForCenter, multipleSpeedGesture) {
         var originalSpeed = MPVLib.getPropertyFloat("speed") ?: 1f
         detectTapGestures(
-          onTap = {
-            // Calculate boundaries based on doubleTapSeekAreaWidth (percentage)
+                   onTap = {
+            // 1. Calculate Horizontal Boundaries (Left/Right)
             val seekAreaFraction = doubleTapSeekAreaWidth / 100f
             val leftBoundary = size.width * seekAreaFraction
             val rightBoundary = size.width * (1f - seekAreaFraction)
+
+            // 2. Calculate Vertical Boundaries (The "Blue Area")
+            // We define the top 15% and bottom 15% as "Safe Zones"
+            val topBoundary = size.height * 0.15f
+            val bottomBoundary = size.height * 0.85f
+            val isBlueArea = it.y < topBoundary || it.y > bottomBoundary
+
+            // 3. Identify where the tap happened horizontally
             val isCenterTap = it.x > leftBoundary && it.x < rightBoundary
-            
-            if (useSingleTapForCenter && isCenterTap) {
-              viewModel.handleCenterSingleTap()
+            val isRightTap = it.x > rightBoundary
+            val isLeftTap = it.x < leftBoundary
+
+            // 4. Execute Logic
+            if (isBlueArea) {
+                // ALWAYS just toggle controls if in the Blue Area (Top/Bottom)
+                if (controlsShown) viewModel.hideControls() else viewModel.showControls()
             } else {
-              if (controlsShown) viewModel.hideControls() else viewModel.showControls()
+                // We are in the Middle Vertical Band -> Check our settings
+                if (isCenterTap) {
+                     // Center Logic
+                     if (useSingleTapForCenter) {
+                        viewModel.handleCenterSingleTap()
+                     } else {
+                        if (controlsShown) viewModel.hideControls() else viewModel.showControls()
+                     }
+                } else {
+                     // Side Logic (Left/Right)
+                     if (useSingleTapToSeek) {
+                        if (isRightTap) {
+                            viewModel.handleRightDoubleTap() // Seek Forward
+                        } else if (isLeftTap) {
+                            viewModel.handleLeftDoubleTap() // Seek Backward
+                        }
+                     } else {
+                        // Default behavior if setting is OFF
+                        if (controlsShown) viewModel.hideControls() else viewModel.showControls()
+                     }
+                }
             }
-          },
-          onDoubleTap = if (useSingleTapToSeek) null else { offset ->
+          },    onDoubleTap = if (useSingleTapToSeek) null else { offset ->
             if (areControlsLocked || isDoubleTapSeeking) return@if
             // Calculate boundaries based on doubleTapSeekAreaWidth (percentage)
             val seekAreaFraction = doubleTapSeekAreaWidth / 100f
