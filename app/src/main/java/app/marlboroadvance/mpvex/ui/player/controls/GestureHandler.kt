@@ -167,35 +167,37 @@ fun GestureHandler(
             }
           },
           onDoubleTap = if (useSingleTapToSeek) null else { offset ->
-            if (areControlsLocked || isDoubleTapSeeking) return@if
-            // Calculate boundaries based on doubleTapSeekAreaWidth (percentage)
-            val seekAreaFraction = doubleTapSeekAreaWidth / 100f
-            val leftBoundary = size.width * seekAreaFraction
-            val rightBoundary = size.width * (1f - seekAreaFraction)
-            
-            if (offset.x > rightBoundary) {
-              // Right region gesture
-              val rightGesture = gesturePreferences.rightSingleActionGesture.get()
-              if (rightGesture == SingleActionGesture.Seek) {
-                isDoubleTapSeeking = true
-                lastSeekRegion = "right"
-                lastSeekTime = System.currentTimeMillis()
-                if (!isSeekingForwards) viewModel.updateSeekAmount(0)
-              }
-              viewModel.handleRightDoubleTap()
-            } else if (offset.x < leftBoundary) {
-              // Left region gesture
-              val leftGesture = gesturePreferences.leftSingleActionGesture.get()
-              if (leftGesture == SingleActionGesture.Seek) {
-                isDoubleTapSeeking = true
-                lastSeekRegion = "left"
-                lastSeekTime = System.currentTimeMillis()
-                if (isSeekingForwards) viewModel.updateSeekAmount(0)
-              }
-              viewModel.handleLeftDoubleTap()
-            } else {
-              // Center region gesture
-              viewModel.handleCenterDoubleTap()
+            // SAFEST FIX: Use nesting instead of "return" to avoid compiler errors
+            if (!areControlsLocked && !isDoubleTapSeeking) {
+                // Calculate boundaries based on doubleTapSeekAreaWidth (percentage)
+                val seekAreaFraction = doubleTapSeekAreaWidth / 100f
+                val leftBoundary = size.width * seekAreaFraction
+                val rightBoundary = size.width * (1f - seekAreaFraction)
+
+                if (offset.x > rightBoundary) {
+                  // Right region gesture
+                  val rightGesture = gesturePreferences.rightSingleActionGesture.get()
+                  if (rightGesture == SingleActionGesture.Seek) {
+                    isDoubleTapSeeking = true
+                    lastSeekRegion = "right"
+                    lastSeekTime = System.currentTimeMillis()
+                    if (!isSeekingForwards) viewModel.updateSeekAmount(0)
+                  }
+                  viewModel.handleRightDoubleTap()
+                } else if (offset.x < leftBoundary) {
+                  // Left region gesture
+                  val leftGesture = gesturePreferences.leftSingleActionGesture.get()
+                  if (leftGesture == SingleActionGesture.Seek) {
+                    isDoubleTapSeeking = true
+                    lastSeekRegion = "left"
+                    lastSeekTime = System.currentTimeMillis()
+                    if (isSeekingForwards) viewModel.updateSeekAmount(0)
+                  }
+                  viewModel.handleLeftDoubleTap()
+                } else {
+                  // Center region gesture
+                  viewModel.handleCenterDoubleTap()
+                }
             }
           },
           onPress = {
