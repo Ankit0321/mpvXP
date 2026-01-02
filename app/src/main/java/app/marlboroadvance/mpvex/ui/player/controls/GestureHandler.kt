@@ -165,7 +165,8 @@ fun GestureHandler(
                      }
                 }
             }
-          },    onDoubleTap = if (useSingleTapToSeek) null else { offset ->
+          },
+          onDoubleTap = if (useSingleTapToSeek) null else { offset ->
             if (areControlsLocked || isDoubleTapSeeking) return@if
             // Calculate boundaries based on doubleTapSeekAreaWidth (percentage)
             val seekAreaFraction = doubleTapSeekAreaWidth / 100f
