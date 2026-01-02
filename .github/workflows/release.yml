@@ -1,10 +1,10 @@
 name: Build Debug APK
 
 on:
-  workflow_dispatch:      # Adds a "Run" button to the Actions tab
+  workflow_dispatch:      # 1. Allows you to click "Run" manually
   push:
     tags:
-      - 'v*'              # Also runs if you tag a release
+      - 'v*'              # 2. Also runs if you create a tag
 
 jobs:
   build:
@@ -19,15 +19,17 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # THIS FIXES THE PERMISSION ERROR
+      # FIXES ERROR 126 (Permission Denied)
       - name: Make gradlew executable
         run: chmod +x gradlew
 
+      # FIXES ERROR 2 (Missing Key) - Builds a test version instead
       - name: Build Debug APK
         run: ./gradlew assembleDebug
 
+      # FIXES MISSING FILE ERROR - Finds the APK wherever it is
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: my-app-debug
+          path: '**/*.apk'
