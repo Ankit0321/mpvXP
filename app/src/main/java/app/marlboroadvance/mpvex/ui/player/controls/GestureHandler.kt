@@ -134,14 +134,14 @@ fun GestureHandler(
               if (controlsShown) viewModel.hideControls() else viewModel.showControls()
             }
           },
-          onDoubleTap = {
-            if (areControlsLocked || isDoubleTapSeeking) return@detectTapGestures
+          onDoubleTap = if (useSingleTapToSeek) null else { offset ->
+            if (areControlsLocked || isDoubleTapSeeking) return@if
             // Calculate boundaries based on doubleTapSeekAreaWidth (percentage)
             val seekAreaFraction = doubleTapSeekAreaWidth / 100f
             val leftBoundary = size.width * seekAreaFraction
             val rightBoundary = size.width * (1f - seekAreaFraction)
             
-            if (it.x > rightBoundary) {
+            if (offset.x > rightBoundary) {
               // Right region gesture
               val rightGesture = gesturePreferences.rightSingleActionGesture.get()
               if (rightGesture == SingleActionGesture.Seek) {
@@ -151,7 +151,7 @@ fun GestureHandler(
                 if (!isSeekingForwards) viewModel.updateSeekAmount(0)
               }
               viewModel.handleRightDoubleTap()
-            } else if (it.x < leftBoundary) {
+            } else if (offset.x < leftBoundary) {
               // Left region gesture
               val leftGesture = gesturePreferences.leftSingleActionGesture.get()
               if (leftGesture == SingleActionGesture.Seek) {
