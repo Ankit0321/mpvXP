@@ -266,6 +266,21 @@ object GesturePreferencesScreen : Screen {
               )
             },
           )
+          
+          PreferenceDivider()
+
+          val useSingleTapToSeek by preferences.useSingleTapToSeek.collectAsState()
+          SwitchPreference(
+            value = useSingleTapToSeek,
+            onValueChange = { preferences.useSingleTapToSeek.set(it) },
+            title = { Text("Single tap to seek") },
+            summary = { 
+              Text(
+                "Tap left/right side to seek. Tap top/bottom edges to show controls.",
+                color = MaterialTheme.colorScheme.outline,
+              ) 
+            },
+          )
 
           val doubleTapKeyCodes =
             listOf(
